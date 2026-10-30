@@ -1,63 +1,147 @@
-# Improved Obsidian Calendar plugin
+# Persian Calendar for Obsidian (Jalali + Gregorian)
 
-This plugin is a fork of the abandoned [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin, with highly-requested improvements:
-- Added quarters to the calendar leaf
-- The month, year, and quarters can now be clicked to navigate to the corresponding monthly/quarterly/yearly note, fully integrated with the [Periodic Notes](https://github.com/liamcain/obsidian-periodic-notes) plugin
-- New options, such as the ability to change which side the week numbers get displayed, and the ability to hide quarters
-- **Persian (Jalali) calendar**: switch between Gregorian and Jalali with the toggle above the calendar (or the "Toggle Jalali/Gregorian calendar" command). Switching keeps the month you are viewing, and today's date in the other calendar is shown next to the toggle. In Jalali mode, daily, weekly, monthly, quarterly and yearly notes are named and looked up by Jalali date (e.g. `1405-08-08.md`), using the format, folder and template set under *Jalali Calendar* in the plugin settings. Weeks start on Saturday.
+A calendar view for [Obsidian](https://obsidian.md/) that works in **both the Persian (Jalali / Shamsi) and the Gregorian calendar**. Switch between them with one click, and your daily, weekly, monthly, quarterly and yearly notes are named and found by **Jalali date** while you are in Jalali mode (for example `1405-08-08.md`).
 
-<img width="294" height="386" alt="2025-12-31_tIZYFaONKG" src="https://github.com/user-attachments/assets/020ef1ab-a08b-4b9e-9f03-5bfd56885634" />
+It is built on [FBarrca's improved fork](https://github.com/FBarrca/obsidian-calendar-plugin) of Liam Cain's [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin, which added quarters, clickable month/year headers and more layout options.
 
-# Installation
-
-This plugin is not available through the community plugin browser, you'll need to install it manually by following these steps:
-
-You can install it either by using [BRAT](https://obsidian.md/plugins?id=obsidian42-brat) or manually by following the instructions below:
-    
-  1. Download these 3 files by clicking on these links: [main.js](https://github.com/FBarrca/obsidian-calendar-plugin/releases/download/1.5.13/main.js) - [manifest.json](https://github.com/FBarrca/obsidian-calendar-plugin/releases/download/1.5.13/manifest.json) - [styles.css](https://github.com/FBarrca/obsidian-calendar-plugin/releases/download/1.5.13/styles.css), or by navigating to the [Releases](https://github.com/FBarrca/obsidian-calendar-plugin/releases/tag/1.5.13) page and downloading them from there.
-  2. In your File Explorer, navigate to your vault's plugin folder, located at `<your_vault>/.obsidian/plugins/`, then create a new folder and name it `Calendar`.
-  Note: On some operating systems, the .obsidian folder might be hidden. Make sure to show hidden files in your file explorer.
-  3. Copy all 3 files (main.js, manifest.json, styles.css) into that Calendar folder you just created.
-  4. Restart Obsidian.
-  5. Go to Settings -> Community plugins.
-  6. Make sure Safe mode is off.
-  7. Find "Calendar" in the list and enable it.
-
-For context, you can read the original Calendar plugin's description below, though it might not be fully up to date:
----
-
-This plugin for [Obsidian](https://obsidian.md/) creates a simple Calendar view for visualizing and navigating between your daily notes.
-
-![screenshot-full](https://github.com/user-attachments/assets/191df6fe-659a-4996-beb3-28930b759fd2)
-
-## Usage
-
-After enabling the plugin in the settings menu, you should see the calendar view appear in the right sidebar.
-
-The plugin reads your Daily Note settings to know your date format, your daily note template location, and the location for new daily notes it creates.
+<img width="294" height="386" alt="Gregorian calendar view" src="https://github.com/user-attachments/assets/020ef1ab-a08b-4b9e-9f03-5bfd56885634" />
 
 ## Features
 
-- Go to any **daily note**.
-- Create new daily notes for days that don't have one. (This is helpful for when you need to backfill old notes or if you're planning ahead for future notes! This will use your current **daily note** template!)
-- Visualize your writing. Each day includes a meter to approximate how much you've written that day.
-- Use **Weekly notes** for an added organization layer! They work just like daily notes, but have their own customization options.
+**Persian calendar**
+
+- **Gregorian ⇄ Jalali switch** above the calendar (`Gregorian | شمسی`), plus a command. Your choice is remembered.
+- The month you are looking at carries over when you switch, and **today's date in the other calendar** is shown next to the switch.
+- A real Jalali month grid: Persian month names, Persian digits (optional), weeks starting on **Saturday**, correct month lengths and leap years (for example 30 Esfand 1403 exists, 30 Esfand 1404 does not).
+- **All five note types follow the Jalali calendar** in Jalali mode: daily, weekly, monthly, quarterly and yearly. Each has its own filename format, folder and template.
+- **Convert date** command: type a date in one calendar, see it in the other, then insert it at the cursor or copy it.
+- **Reveal active note** understands Jalali notes and jumps the calendar to the right month.
+
+**Everything from the fork**
+
+- Quarters in the calendar, and clickable month, year and quarter headers that open the monthly, quarterly and yearly notes.
+- Week numbers, on the left or the right.
+- Ctrl/Cmd-click to open a note in a new tab or split, hover preview, confirm-before-create, word-count and task dots (Gregorian view).
+
+Gregorian mode behaves exactly as before. Existing notes are never renamed or touched.
+
+## Installation
+
+This plugin is not in the community plugin browser. Install it with BRAT or manually.
+
+**BRAT:** install [BRAT](https://obsidian.md/plugins?id=obsidian42-brat), choose *Add beta plugin*, and enter `MehrzadGolabi/obsidian-persian-calendar-plugin`.
+
+**Manually:**
+
+1. Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/MehrzadGolabi/obsidian-persian-calendar-plugin/releases/latest), or download the `calendar-<version>.zip` and unzip it.
+2. In your vault, open `.obsidian/plugins/` (it may be hidden) and create a folder named `calendar`.
+3. Put the three files in that folder.
+4. Restart Obsidian, then go to **Settings → Community plugins**, turn off Restricted/Safe mode and enable **Calendar**.
+
+If you already use the original Calendar plugin, disable it first: both use the same plugin id (`calendar`).
+
+Requires Obsidian 0.9.11 or newer.
+
+## Using the Jalali calendar
+
+1. Open the calendar (right sidebar, or the command **Calendar: Open view**).
+2. Click **شمسی** above the calendar, or run **Toggle Jalali/Gregorian calendar** from the command palette. Click **Gregorian** to go back.
+3. Click a day to open or create that day's note. Click the **month**, **year**, **quarter** (if enabled) or a **week number** (if enabled) for the matching note.
+4. Ctrl/Cmd-click opens the note in a split (or a new tab, see *Ctrl + Click Behaviour*). Hold Ctrl/Cmd while hovering for a page preview.
+
+### Commands
+
+| Command | What it does |
+| --- | --- |
+| Open view | Opens the calendar if it was closed. |
+| Toggle Jalali/Gregorian calendar | Switches the calendar mode. |
+| Convert date between Jalali and Gregorian | Opens the converter (below). |
+| Reveal active note | Moves the calendar to the month of the note you have open. |
+| Open Weekly Note | Opens this week's note (Gregorian, when Periodic Notes is not handling weekly notes). |
+
+### Converting a date
+
+Run **Convert date between Jalali and Gregorian**. Choose the calendar you are typing in, then enter the date as year-month-day. `-`, `/` and `.` all work, and Persian digits are accepted (`۱۴۰۵/۸/۸`). The modal shows both calendars in numeric and long form and rejects impossible dates. **Insert at cursor** puts the *other* calendar's `YYYY-MM-DD` date into your open note; **Copy** copies it. It opens on today's date in the calendar you are currently viewing.
+
+### How Jalali notes are named
+
+In Jalali mode a note's path is `<folder>/<formatted name>.md`, using the settings for that note type. Defaults:
+
+| Note type | Default format | Example |
+| --- | --- | --- |
+| Daily | `jYYYY-jMM-jDD` | `1405-08-08` |
+| Weekly | `jgggg-[W]jww` | `1405-W32` |
+| Monthly | `jYYYY-jMM` | `1405-08` |
+| Quarterly | `jYYYY-[Q]jQ` | `1405-Q3` |
+| Yearly | `jYYYY` | `1405` |
+
+Filenames always use Latin digits, whatever the *Persian digits* display setting says, so notes stay easy to search and link.
+
+**Format tokens**
+
+| Token | Meaning | Example |
+| --- | --- | --- |
+| `jYYYY` / `jYY` | Jalali year | `1405` / `05` |
+| `jMMMM` | Persian month name | `آبان` |
+| `jMM` / `jM` | Month number | `08` / `8` |
+| `jDD` / `jD` | Day of month | `08` / `8` |
+| `jQ` | Quarter (1–4, three months each) | `3` |
+| `jww` / `jw` | Week number (padded / plain) | `06` / `6` |
+| `jgggg` | Year the week belongs to | `1405` |
+| `[text]` | Literal text | `[W]` gives `W` |
+
+**Weeks.** Weeks run Saturday to Friday. Week 1 is the week that contains 1 Farvardin, and a week is assigned to the Jalali year of its Friday, so a week that straddles the new year is always week 1 of the new year. Use `jgggg` (not `jYYYY`) with `jww` so those weeks get the right year.
+
+**Templates.** Template files work as they do for Gregorian notes, with these variables:
+
+| Variable | Result |
+| --- | --- |
+| `{{title}}`, `{{date}}` | The note's filename |
+| `{{time}}` | The current time (`HH:mm`) |
+| `{{date:FORMAT}}` | The note's date in any Jalali format, e.g. `{{date:jD jMMMM jYYYY}}` |
+| `{{yesterday}}`, `{{tomorrow}}` | The neighbouring days, in the note's format |
+
+Offsets such as `{{date+1d}}` are not supported in Jalali templates.
 
 ## Settings
 
-- **Start week on [default: locale]**: Configure the Calendar view to show Sunday or Monday as the first day of the week. Choosing 'locale' will set the start day to be whatever is the default for your chosen locale (`Settings > About > Language`)
-- **Words per Dot [default: 250]**: Starting in version 1.3, dots reflect the word count of your files. By default, each dot represents 250 words, you can change that value to whatever you want. Set this to `0` to disable the word count entirely. **Note:** There is a max of 5 dots so that the view doesn't get too big!
-- **Confirm before creating new note [default: on]**: If you don't like that a modal prompts you before creating a new daily note, you can turn it off.
-- **Show Week Number [default: off]**: Enable this to add a new column to the calendar view showing the [Week Number](https://en.wikipedia.org/wiki/Week#Week_numbering). Clicking on these cells will open your **weekly note**.
+**General** (apply to both calendars unless noted)
 
-## Customization
+- **Words per dot** (default 250): how many words each dot represents in the Gregorian view. `0` turns it off.
+- **Start week on** (Gregorian only): the first day of the week. The Jalali calendar always starts on Saturday.
+- **Ctrl + Click Behaviour**: open in a new tab or a new split.
+- **Confirm before creating new note** (default on).
+- **Show week number** and **Change week number side**: add a week column, on the left or right.
+- **Show Quarter**: show the quarter next to the year.
 
-The following CSS Variables can be overridden in your `obsidian.css` file.
+**Jalali Calendar**
+
+- **Persian digits** (default on): show ۰۱۲۳۴۵۶۷۸۹ in the Jalali view.
+- For each of daily, weekly, monthly, quarterly and yearly notes: **format**, **folder** and **template**. Folders are created on demand; leave a field empty for the default.
+
+**Advanced**
+
+- **Override locale** (Gregorian only).
+
+Weekly note settings for the Gregorian calendar appear when *Show week number* is on and the Periodic Notes plugin is not managing weekly notes.
+
+## Limitations
+
+- Jalali mode shows a dot under days that have a note. The word-count and open-task dots, and custom sources from other plugins, are Gregorian-view only.
+- The [Periodic Notes](https://github.com/liamcain/obsidian-periodic-notes) plugin only knows Gregorian settings. Its integration applies to the Gregorian calendar; Jalali notes use the settings above.
+- *Start week on*, *Override locale* and the Gregorian note formats do not affect the Jalali calendar.
+- Jalali dates are supported from about year 1 to 3177.
+- No holidays or events yet.
+
+## Gregorian calendar
+
+The Gregorian view is the original Calendar plugin view. It reads your Daily Notes (or Periodic Notes) settings for the date format, template and folder, and shows a meter of how much you wrote each day. Solid dots reflect word count (one dot per *Words per dot*, up to five); a hollow dot means the day has unfinished tasks.
+
+### Styling the Gregorian view
+
+The following CSS variables can be overridden in a snippet or your theme:
 
 ```css
-/* obsidian-calendar-plugin */
-/* https://github.com/liamcain/obsidian-calendar-plugin */
-
 #calendar-container {
   --color-background-heading: transparent;
   --color-background-day: transparent;
@@ -76,153 +160,46 @@ The following CSS Variables can be overridden in your `obsidian.css` file.
 }
 ```
 
-In addition to the CSS Variables, there are some classes you can override for further customization. For example, if you don't like how bright the title is, you can override it with:
+Always prefix overrides with `#calendar-container`, and ignore the generated `svelte-…` class suffixes: they change between releases. The Jalali view uses your theme's own colour variables (`--text-normal`, `--text-accent`, `--background-modifier-hover`, …), so it follows your theme without extra styling.
 
-```css
-#calendar-container .year {
-  color: var(--text-normal);
-}
-```
+### Weekly notes in Gregorian mode
 
-> **Note:** It's especially important when overriding the classes to prefix them with `#calendar-container` to avoid any unexpected changes within Obsidian!
+If you use weekly notes with the Gregorian calendar, the default format is `gggg-[W]ww` and the template supports these tags:
 
-### Caution to Theme Creators
-
-If you use "Inspect Element" on the calendar, you will notice that the CSS classes are quite illegible. For example: `.task.svelte-1lgyrog.svelte-1lgyrog`. What's going on here? The classes that begin with `svelte-` are autogenerated and are used to avoid the calendar styles affecting any other elements in the app. That being said: **ignore them!** Those CSS classes are likely to change from release to release, and your overrides _will_ break. Just target the human-readable part of the class names. So to override `task.svelte-1lgyrog.svelte-1lgyrog`, you should use `#calendar-container .task { ... }`
-
-## Compatibility
-
-`obsidian-calendar-plugin` currently requires Obsidian v0.9.11 or above to work properly.
-
-## Installation
-
-You can install the plugin via the Community Plugins tab within Obsidian. Just search for "Calendar."
+| Tag | Description |
+| --- | --- |
+| `sunday` … `saturday` | `{{sunday:gggg-MM-DD}}` inserts that day's date; you must give a format. |
+| `title` | The note's title. |
+| `date`, `time` | The date and time of the first day of the week. |
 
 ## FAQ
 
-### What do the dots mean?
+**Can I use only the Jalali calendar?** Yes. Switch to Jalali and set *Show week number* / *Show Quarter* as you like. The Gregorian view stays available but hidden.
 
-Each solid dot represents 250 words in your daily note. So 4 dots means you've written a thousands words for that day! If you want to change that threshold, you can set a different value for "Words Per Dot" in the Calendar settings.
+**Will switching calendars change my notes?** No. Each calendar looks notes up by its own filename format, and nothing is renamed or moved.
 
-The hollow dots, on the other hand, mean that the day has incomplete tasks in it. (**Note:** There will only ever be 1 hollow dot on a particular day, regardless of the number of remaining tasks)
+**A Jalali note exists but its day has no dot.** The note must be at exactly `<folder>/<name>.md` for that type's current format. Check the folder and format in *Jalali Calendar* settings.
 
-### How do I change the styling of the Calendar?
+**How do I hide or reopen the calendar?** Right-click the view's tab to close it. Reopen it from the command palette with **Calendar: Open view**.
 
-By default, the calendar should seamlessly match your theme, but if you'd like to further customize it, you can! In your `obsidian.css` file (inside your vault) you can configure the styling to your heart's content.
+**Can I move or pin the calendar?** Yes. Drag it to the left sidebar or the main area, where it can also be pinned.
 
-### Can I add week numbers to the calendar?
+## Development
 
-In the settings, you can enable "Show Week Numbers" to add a "week number" column to the calendar. Click on the week number to open a "weekly note".
-
-### How do I hide the calendar plugin without disabling the plugin?
-
-Just like other sidebar views (e.g. Backlinks, Outline), the calendar view can be closed by right-clicking on the view icon.
-
-![how-to-close](./images/how-to-close.png)
-
-### I accidentally closed the calendar. How do I reopen it?
-
-If you close the calendar widget (right-clicking on the panel nav and clicking close), you can always reopen the view from the Command Palette. Just search for `Calendar: Open view`.
-
-![how-to-reopen](./images/how-to-reopen.png)
-
-### How do I have the calendar start on Monday?
-
-From the Settings menu, you can toggle "Start week on Monday".
-
-### How do I include "unformatted" words in my weekly note filenames?
-
-If you want the weekly note format to include a word (e.g. "Week 21 of Year 2020") you can do so by surrounding the words with `[]` brackets. This tells [moment](https://momentjs.com/docs/#/displaying/format/) to ignore the words. So for the example above, you would set your format to `[Week] ww [of Year] gggg`.
-
-### I don't like showing the week numbers but I still want to use weekly notes. Can I still use them?
-
-You can open the current weekly note from the command palette by searching `Calendar: Open weekly Note`. This will open the weekly note for the current week.
-
-To configure the `format`, `folder`, and `template`, you will temporarily need to toggle on "Show weekly numbers" in the settings, but if you toggle it back off, your settings will persist.
-
-## Protips
-
-### Embed your entire week in a weekly note
-
-If you add the following snippet to your weekly note template, you can a seamless view of your week in a single click.
-
-```md
-## Week at a Glance
-
-![[{{sunday:gggg-MM-DD}}]]
-![[{{monday:gggg-MM-DD}}]]
-![[{{tuesday:gggg-MM-DD}}]]
-![[{{wednesday:gggg-MM-DD}}]]
-![[{{thursday:gggg-MM-DD}}]]
-![[{{friday:gggg-MM-DD}}]]
-![[{{saturday:gggg-MM-DD}}]]
+```bash
+yarn install        # also applies the patches in patches/
+yarn test           # jest
+yarn build          # svelte-check + eslint + rollup, writes main.js
 ```
 
-### Hover Preview
+The Jalali code lives in `src/jalali/` (dates, month grid, filename parsing, date conversion), `src/io/jalali/` (finding, creating and opening notes) and `src/ui/JalaliCalendar.svelte`. It is built on [`jalaali-js`](https://github.com/jalaali/jalaali-js).
 
-Just like the Obsidian's graph and internal links, the calendar supports page previews for your daily notes. Just hover over a cell while holding down `Ctrl/Cmd` on your keyboard!
+Note: `obsidian-calendar-ui` bundles its own copy of Svelte, so the Gregorian calendar is hidden rather than unmounted when you switch to Jalali. Unmounting it throws and freezes the view.
 
-### The calendar can be moved (and pinned!) anywhere
+## Credits
 
-Just because the calendar appears in the right sidebar doesn't mean it has to stay there. Feel free to drag it to the left sidebar, or (if you have the screen real estate for it) into the main content area. If you move it out of the sidebar, the view can even be pinned; great for more advanced tile layouts!
+- [Liam Cain](https://github.com/liamcain), author of the original [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin.
+- [FBarrca](https://github.com/FBarrca) and contributors, for the improved fork this builds on.
+- [MehrzadGolabi](https://github.com/MehrzadGolabi), for the Persian (Jalali) calendar.
 
-![how-to-pin](./images/how-to-pin.png)
-
-### Open daily notes in a new split
-
-If you `Ctrl/Command`-Click on a note in your calendar, it will open daily note in a new split. Useful if you want to open a bunch of daily notes in a row (especially if you have the **Sliding Panes** plugin enabled!)
-
-### Reveal open note on calendar
-
-If you open a note from a different month, you might want to see it on the calendar view. To do so, you can run the command `Calendar: Reveal open note` from the command palette.
-
-### Add custom styling for weekends
-
-If you want to style weekends to be distinguishable from weekdays, you can set the `var(--color-background-weekend)` to be any color you want.
-
-![how-to-weekend](./images/how-to-weekend.png)
-
-### Weekly Notes (deprecated)
-
-#### Weekly notes have a new home
-
-The weekly note functionality has been split out into its [very own plugin](https://github.com/liamcain/obsidian-periodic-notes/). In the future, the functionality will be removed from the Calendar plugin; so if you're currently using weekly notes, I encourage you to make the switch. Don't worry, the behavior is functionally identical and will still integrate with the calendar view!
-
-This split was inspired by the [One Thing Well](https://en.wikipedia.org/wiki/Unix_philosophy) philosophy. Plugins should be as modular. Some users might want weekly notes and have no use for a calendar view. And vice versa.
-
-If you are currently using weekly notes within the Calendar plugin, the new Periodic Notes plugin will migrate your settings for you automatically.
-
-### Usage
-
-You can open **weekly notes** in 2 ways: searching `Calendar: open weekly note` in the command palette or by clicking on the week number. Weekly notes can be configured from the Calendar settings. There are 3 settings:
-
-- **Folder:** The folder that your weekly notes go into. It can be the same or different from your daily notes. By default they are placed in your vault root.
-- **Template:** Configure a template for weekly notes. Weekly notes have slightly different template tags than daily notes. See here for the list of supported [weekly note template tags](#template-tags).
-
-> Note: The path here won't autocomplete for you, you'll need to enter the full path.
-
-- **Format:** The date format for the weekly note filename. Defaults to `"gggg-[W]ww`. If you use `DD` in the week format, this will refer to first day of the week (Sunday or Monday, depending on your settings).
-
-#### Template Tags
-
-| Tag                                                                                    | Description                                                                                                                                                                                                  |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `sunday`, `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday` | Because weekly tags refer to main days, you can refer to individual days like this `{{sunday:gggg-MM-DD}}` to automatically insert the date for that particular day. Note, you must specify the date format! |
-| `title`                                                                                | Works the same as the daily note `{{title}}`. It will insert the title of the note                                                                                                                           |
-| `date`, `time`                                                                         | Works the same as the daily note `{{date}}` and `{{time}}`. It will insert the date and time of the first day of the week. Useful for creating a heading (e.g. `# # {{date:gggg [Week] ww}}`).               |
-
-## See it in action
-
-- [Nick Milo provides a nice plugin walkthrough](https://www.youtube.com/watch?v=X61wRmfZU8Y&t=1099s)
-- [Santi Younger demos how Calendar + Periodic Notes can be used for weekly review](https://www.youtube.com/watch?v=T9y8JABS9_Q)
-- [Filipe Donadio uses the calendar to plan his day](https://www.youtube.com/watch?v=hxf3_dXIcqc)
-
-## Say Thanks 🙏
-
-If you like this plugin and would like to buy me a coffee, you can!
-
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="BuyMeACoffee" width="100">](https://www.buymeacoffee.com/liamcain)
-
-Like my work and want to see more like it? You can sponsor me.
-
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/liamcain?style=social)](https://github.com/sponsors/liamcain)
+Released under the [MIT License](LICENSE).
