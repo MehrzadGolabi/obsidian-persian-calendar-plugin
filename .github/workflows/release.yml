@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+*" # e.g. 1.6.0
+
+permissions:
+  contents: write
+
+env:
+  PLUGIN_ID: calendar
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check the tag matches manifest.json
+        run: |
+          manifest_version=$(node -p "require('./manifest.json').version")
+          if [ "$manifest_version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match manifest.json version $manifest_version"
+            exit 1
+          fi
+
+      - name: Install
+        run: |
+          npm install -g yarn@1.22.22
+          yarn install --frozen-lockfile
+
+      - name: Test
+        run: yarn test
+
+      - name: Build
+        run: yarn build
+
+      - name: Package
+        run: |
+          mkdir "$PLUGIN_ID"
+          cp main.js manifest.json styles.css "$PLUGIN_ID"/
+          zip -r "$PLUGIN_ID-$GITHUB_REF_NAME.zip" "$PLUGIN_ID"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          assets="main.js manifest.json styles.css $PLUGIN_ID-$GITHUB_REF_NAME.zip"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" $assets --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" $assets --title "$GITHUB_REF_NAME" --generate-notes
+          fi

@@ -195,6 +195,10 @@ yarn build          # svelte-check + eslint + rollup, writes main.js
 
 The Jalali code lives in `src/jalali/` (dates, month grid, filename parsing, date conversion), `src/io/jalali/` (finding, creating and opening notes) and `src/ui/JalaliCalendar.svelte`. It is built on [`jalaali-js`](https://github.com/jalaali/jalaali-js).
 
+### Releasing
+
+Bump the version in `manifest.json`, `package.json` and `versions.json`, commit, then push a tag with the same number (for example `git tag 1.6.1 && git push origin 1.6.1`). The [Release workflow](.github/workflows/release.yml) refuses to run if the tag and `manifest.json` disagree, runs the tests and the full build, and publishes the release with `main.js`, `manifest.json`, `styles.css` and `calendar-<version>.zip`. If a release for the tag already exists, it just updates its assets.
+
 Note: `obsidian-calendar-ui` bundles its own copy of Svelte, so the Gregorian calendar is hidden rather than unmounted when you switch to Jalali. Unmounting it throws and freezes the view.
 
 ## Credits

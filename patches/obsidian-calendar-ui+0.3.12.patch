@@ -3178,7 +3178,7 @@ diff --git a/node_modules/obsidian-calendar-ui/index.d.ts b/node_modules/obsidia
 index 451e9d9..26ba4c2 100644
 --- a/node_modules/obsidian-calendar-ui/index.d.ts
 +++ b/node_modules/obsidian-calendar-ui/index.d.ts
-@@ -32,11 +32,13 @@ export interface ICalendarSource {
+@@ -32,11 +32,16 @@ export interface ICalendarSource {
  export class Calendar extends SvelteComponentTyped<{
    // Settings
    showWeekNums: boolean;
@@ -3189,6 +3189,9 @@ index 451e9d9..26ba4c2 100644
    onHoverDay?: (date: Moment, targetEl: EventTarget) => void;
    onHoverWeek?: (date: Moment, targetEl: EventTarget) => void;
 +  quarterVisible?: boolean;
++  onClickMonth?: (date: Moment, isMetaPressed: boolean) => void;
++  onClickYear?: (date: Moment, isMetaPressed: boolean) => void;
++  onClickQuarter?: (date: Moment, isMetaPressed: boolean) => void;
    onClickDay?: (date: Moment, isMetaPressed: boolean) => void;
    onClickWeek?: (date: Moment, isMetaPressed: boolean) => void;
    onContextMenuDay?: (date: Moment, event: MouseEvent) => boolean;
