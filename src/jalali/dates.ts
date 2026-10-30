@@ -151,3 +151,33 @@ export function formatJalali(date: Date, format: string): string {
 export function toPersianDigits(value: number | string): string {
   return String(value).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 }
+
+/**
+ * Move `date` by `amount` periods. For month, quarter and year the Jalali day
+ * is clamped to the length of the target month.
+ */
+export function shiftJalali(
+  date: Date,
+  period: JalaliPeriod,
+  amount: number
+): Date {
+  if (period === "day" || period === "week") {
+    const days = period === "day" ? amount : amount * 7;
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + days,
+      12
+    );
+  }
+  const months = { month: 1, quarter: 3, year: 12 }[period] * amount;
+  const { year, month, day } = toJalali(date);
+  const index = year * 12 + (month - 1) + months;
+  const targetYear = Math.floor(index / 12);
+  const targetMonth = (index % 12) + 1;
+  return fromJalali(
+    targetYear,
+    targetMonth,
+    Math.min(day, daysInMonth(targetYear, targetMonth))
+  );
+}

@@ -5,6 +5,7 @@ import {
   getJalaliWeek,
   isValidJalali,
   quarterOf,
+  shiftJalali,
   startOfJalaliPeriod,
   toPersianDigits,
   startOfJalaliWeek,
@@ -119,5 +120,35 @@ describe("toPersianDigits", () => {
   test("converts latin digits and leaves other text alone", () => {
     expect(toPersianDigits(1405)).toBe("۱۴۰۵");
     expect(toPersianDigits("Q3 08")).toBe("Q۳ ۰۸");
+  });
+});
+
+describe("shiftJalali", () => {
+  const aban8 = new Date(2026, 9, 30, 12); // 8 Aban 1405
+  const jalali = (d: Date) => {
+    const { year, month, day } = toJalali(d);
+    return [year, month, day];
+  };
+
+  test("days and weeks", () => {
+    expect(jalali(shiftJalali(aban8, "day", 1))).toEqual([1405, 8, 9]);
+    expect(jalali(shiftJalali(aban8, "week", -1))).toEqual([1405, 8, 1]);
+  });
+
+  test("months, quarters and years keep the day", () => {
+    expect(jalali(shiftJalali(aban8, "month", 1))).toEqual([1405, 9, 8]);
+    expect(jalali(shiftJalali(aban8, "quarter", 1))).toEqual(
+      [1405, 11, 8]
+    );
+    expect(jalali(shiftJalali(aban8, "year", 1))).toEqual([1406, 8, 8]);
+  });
+
+  test("clamps to the target month's length", () => {
+    expect(jalali(shiftJalali(fromJalali(1405, 6, 31), "month", 1))).toEqual([
+      1405, 7, 30,
+    ]);
+    expect(jalali(shiftJalali(fromJalali(1403, 12, 30), "year", 1))).toEqual([
+      1404, 12, 29,
+    ]);
   });
 });
