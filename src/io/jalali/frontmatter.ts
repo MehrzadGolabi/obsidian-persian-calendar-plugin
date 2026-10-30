@@ -1,4 +1,4 @@
-const FRONTMATTER = /^---\n([\s\S]*?\n)?---[ \t]*(\n|$)/;
+const FRONTMATTER = /^---\r?\n([\s\S]*?\r?\n)?---[ \t]*(\r?\n|$)/;
 
 const unquote = (value: string) => value.trim().replace(/^(["'])(.*)\1$/, "$2");
 
@@ -6,10 +6,12 @@ const unquote = (value: string) => value.trim().replace(/^(["'])(.*)\1$/, "$2");
 export function addAlias(contents: string, alias: string): string {
   const match = FRONTMATTER.exec(contents);
   if (!match) {
-    return `---\naliases: [${alias}]\n---\n${contents}`;
+    const eol = contents.includes("\r\n") ? "\r\n" : "\n";
+    return `---${eol}aliases: [${alias}]${eol}---${eol}${contents}`;
   }
 
-  const lines = (match[1] ?? "").split("\n").slice(0, -1);
+  const eol = match[0].includes("\r\n") ? "\r\n" : "\n";
+  const lines = (match[1] ?? "").split(/\r?\n/).slice(0, -1);
   const index = lines.findIndex((line) => /^aliases\s*:/.test(line));
   if (index === -1) {
     lines.push(`aliases: [${alias}]`);
@@ -36,12 +38,14 @@ export function addAlias(contents: string, alias: string): string {
       if (existing.includes(alias)) {
         return contents;
       }
-      const indent = /^\s*/.exec(lines[end + 1 > index + 1 ? end : index])[0];
-      lines.splice(end + 1, 0, `${indent || "  "}- ${alias}`);
+      // Match the list's own indentation, even when it has none.
+      const indent =
+        end > index ? /^\s*/.exec(lines[end])[0] : "  ";
+      lines.splice(end + 1, 0, `${indent}- ${alias}`);
     }
   }
 
-  return `---\n${lines.join("\n")}\n---${match[2]}${contents.slice(
+  return `---${eol}${lines.join(eol)}${eol}---${match[2]}${contents.slice(
     match[0].length
   )}`;
 }

@@ -1,6 +1,7 @@
 import {
   daysInMonth,
   formatJalali,
+  formatGregorian,
   fromJalali,
   getJalaliWeek,
   isValidJalali,
@@ -150,5 +151,11 @@ describe("shiftJalali", () => {
     expect(jalali(shiftJalali(fromJalali(1403, 12, 30), "year", 1))).toEqual([
       1404, 12, 29,
     ]);
+  });
+});
+
+describe("formatGregorian", () => {
+  test("always uses Latin digits", () => {
+    expect(formatGregorian(new Date(2026, 1, 19, 12))).toBe("2026-02-19");
   });
 });

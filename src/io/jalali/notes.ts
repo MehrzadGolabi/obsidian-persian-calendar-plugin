@@ -1,6 +1,7 @@
 import { normalizePath, TFile, WorkspaceLeaf } from "obsidian";
 
 import {
+  formatGregorian,
   formatJalali,
   JalaliPeriod,
   startOfJalaliPeriod,
@@ -118,7 +119,7 @@ export async function createJalaliNote(
   // Lets Gregorian links, Tasks and Dataview find the Jalali daily note.
   const withAlias =
     period === "day"
-      ? addAlias(contents, window.moment(start).format("YYYY-MM-DD"))
+      ? addAlias(contents, formatGregorian(start))
       : contents;
 
   await ensureFolderExists(path);

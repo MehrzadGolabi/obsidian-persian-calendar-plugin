@@ -181,3 +181,10 @@ export function shiftJalali(
     Math.min(day, daysInMonth(targetYear, targetMonth))
   );
 }
+
+/** `YYYY-MM-DD` in Latin digits, whatever the moment locale is. */
+export function formatGregorian(date: Date): string {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}`;
+}

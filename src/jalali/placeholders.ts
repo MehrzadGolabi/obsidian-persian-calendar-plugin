@@ -1,4 +1,5 @@
 import {
+  formatGregorian,
   formatJalali,
   JALALI_MONTHS,
   JALALI_WEEKDAYS,
@@ -49,10 +50,8 @@ const WEEKDAYS_EN = [
 ];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const pad = (n: number) => String(n).padStart(2, "0");
 
-const gregorian = (d: Date) =>
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const gregorian = formatGregorian;
 const addDays = (d: Date, days: number) =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate() + days, 12);
 const daysBetween = (a: Date, b: Date) =>

@@ -49,3 +49,21 @@ test("a horizontal rule in the body is not mistaken for frontmatter", () => {
     `---\naliases: [${ALIAS}]\n---\ntext\n---\nmore\n---\n`
   );
 });
+
+test("an unindented block list keeps its indentation", () => {
+  expect(add("---\naliases:\n- foo\n- bar\ntags: x\n---\n")).toBe(
+    `---\naliases:\n- foo\n- bar\n- ${ALIAS}\ntags: x\n---\n`
+  );
+});
+
+test("CRLF frontmatter is extended, not duplicated", () => {
+  expect(add("---\r\ntags: x\r\n---\r\nbody\r\n")).toBe(
+    `---\r\ntags: x\r\naliases: [${ALIAS}]\r\n---\r\nbody\r\n`
+  );
+});
+
+test("a CRLF note without frontmatter gets a CRLF block", () => {
+  expect(add("body\r\nmore\r\n")).toBe(
+    `---\r\naliases: [${ALIAS}]\r\n---\r\nbody\r\nmore\r\n`
+  );
+});
