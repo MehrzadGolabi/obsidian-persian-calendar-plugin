@@ -1,9 +1,9 @@
 {
   "id": "calendar",
   "name": "Calendar",
-  "description": "Calendar view of your daily notes",
-  "version": "1.5.13",
-  "author": "Liam Cain & FBarrca",
+  "description": "Calendar view of your daily notes, with Persian (Jalali) calendar support",
+  "version": "1.6.0",
+  "author": "Liam Cain, FBarrca & MehrzadGolabi",
   "authorUrl": "https://github.com/liamcain/",
   "fundingUrl": "https://www.buymeacoffee.com/liamcain",
   "isDesktopOnly": false,
