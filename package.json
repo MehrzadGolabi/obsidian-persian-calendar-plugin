@@ -44,6 +44,7 @@
   },
   "resolutions": {
     "@types/node": "14.14.21",
+    "svelte-check/typescript": "4.2.3",
     "**/@rollup/pluginutils/picomatch": "2.2.2"
   },
   "jest": {
