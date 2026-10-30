@@ -4,7 +4,8 @@ A calendar view for [Obsidian](https://obsidian.md/) that works in **both the Pe
 
 It is built on [FBarrca's improved fork](https://github.com/FBarrca/obsidian-calendar-plugin) of Liam Cain's [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin, which added quarters, clickable month/year headers and more layout options.
 
-<img width="294" height="386" alt="Gregorian calendar view" src="https://github.com/user-attachments/assets/020ef1ab-a08b-4b9e-9f03-5bfd56885634" />
+<img width="457" height="335" alt="image" src="https://github.com/user-attachments/assets/a33a3e8d-a2f6-4617-a20c-fd3c84aeb085" />
+<img width="455" height="333" alt="image" src="https://github.com/user-attachments/assets/2c861e16-5466-4ecf-b636-23dcf1809037" />
 
 ## Features
 
