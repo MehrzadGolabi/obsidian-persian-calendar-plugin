@@ -58,7 +58,7 @@ Requires Obsidian 0.9.11 or newer.
 | Toggle Jalali/Gregorian calendar | Switches the calendar mode. |
 | Convert date between Jalali and Gregorian | Opens the converter (below). |
 | Reveal active note | Moves the calendar to the month of the note you have open. |
-| Open Weekly Note | Opens this week's note (Gregorian, when Periodic Notes is not handling weekly notes). |
+| Open Daily / Weekly / Monthly / Quarterly / Yearly Note | In Jalali mode, opens today's note of that type, creating it if needed. IDs: `open-daily-note`, `open-weekly-note`, `open-monthly-note`, `open-quarterly-note`, `open-yearly-note`. In Gregorian mode only Open Weekly Note exists, when Periodic Notes is not handling weekly notes. |
 
 ### Converting a date
 
@@ -103,6 +103,36 @@ Filenames always use Latin digits, whatever the *Persian digits* display setting
 | `{{yesterday}}`, `{{tomorrow}}` | The neighbouring days, in the note's format |
 
 Offsets such as `{{date+1d}}` are not supported in Jalali templates.
+
+**Persian placeholders.** Typing `{{` in a note offers the placeholders below. They are replaced when the note is created, alongside the variables above. A placeholder that doesn't apply to the note type is left as written, and event placeholders (`{{مناسبت …}}`) are not supported.
+
+| Group | Placeholders | Works in |
+| --- | --- | --- |
+| Date of the note | `{{تاریخ شمسی یادداشت}}` (`1405-08-08`), `{{تاریخ میلادی یادداشت}}` (`2026-10-30`), `{{تاریخ قمری یادداشت}}` (`1447-…`), `{{روز هفته یادداشت}}` (`جمعه (Friday)`), `{{روز ماه یادداشت}}` (`8`) | Daily |
+| Week | `{{هفته یادداشت}}` (`1405-W32`), `{{اول هفته}}`, `{{آخر هفته}}` (Gregorian dates) | Daily, weekly |
+| Month | `{{ماه یادداشت}}` (`1405-08`), `{{نام ماه یادداشت}}` (`آبان (Aban)`), `{{اول ماه}}`, `{{آخر ماه}}` | Daily, monthly |
+| Season | `{{فصل یادداشت}}` (`1405-S3`), `{{نام فصل یادداشت}}` (`پاییز (Autumn)`), `{{اول فصل}}`, `{{آخر فصل}}` | Daily, monthly, quarterly |
+| Year | `{{سال یادداشت}}` (`1405`), `{{اول سال}}`, `{{آخر سال}}` | Daily, weekly, monthly, quarterly, yearly |
+| Today | `{{تاریخ شمسی جاری}}`, `{{تاریخ میلادی جاری}}`, `{{تاریخ قمری جاری}}`, `{{روز هفته جاری}}`, `{{روز ماه جاری}}`, `{{هفته جاری}}`, `{{نام ماه جاری}}`, `{{ماه جاری}}`, `{{نام فصل جاری}}`, `{{فصل جاری}}`, `{{سال جاری}}` | Every note |
+| Days passed / left | `{{روزهای گذشته سال}}`, `{{روزهای باقیمانده سال}}`, and the same for `فصل` and `ماه` | Every note |
+
+Start and end dates are Gregorian `YYYY-MM-DD`. Days passed is 0 on the first day of the period and days left is 0 on the last. Both count from a daily note's own date, and from today in other notes. The lunar date follows the Umm al-Qura calendar minus one day to match Iran's; individual months can still be a day off the official Iranian calendar.
+
+**Gregorian alias.** A new Jalali daily note gets `aliases: [2026-10-30]` (its Gregorian date) in its frontmatter, merged into any frontmatter your template already has, so Tasks, Dataview and old Gregorian links still find it.
+
+### Linking to calendar notes with `@`
+
+In Jalali mode, type `@` in a note to link to a calendar note, or `@/` to insert the date as plain text without a link. The link is created even if the note doesn't exist yet, with no confirmation dialog, and shows the phrase you picked, e.g. `[[1405-W32|این هفته]]`.
+
+| Kind | Phrases | Relative to |
+| --- | --- | --- |
+| Days | امروز، دیروز، فردا، پریروز، پس‌فردا, and today's weekday name | Today |
+| Next / previous | روز بعد، روز قبل، هفته بعد، هفته قبل، ماه بعد، ماه قبل، فصل بعد، فصل قبل، سال بعد، سال قبل | The date of the calendar note you are editing, or today if the open file isn't one |
+| This period | این هفته، این ماه، این فصل، امسال | Today |
+
+### Opening notes from other tools
+
+`obsidian://persian-calendar?type=daily&date=1405-08-20` opens that note and creates it with your templates if it doesn't exist. `type` is `daily`, `weekly`, `monthly`, `quarterly` or `yearly` (default `daily`). `date` is a Jalali `YYYY-MM-DD` date, and any date inside the period selects that period's note (default today). It never shows the confirm-before-create dialog; a bad `type` or `date` shows a notice and creates nothing.
 
 ## Settings
 
