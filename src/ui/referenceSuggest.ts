@@ -85,16 +85,20 @@ export default class ReferenceSuggest extends EditorSuggest<IReferencePhrase> {
       editor.replaceRange(getJalaliNoteName(settings, period, date), start, end);
       return;
     }
+    const typed = editor.getRange(start, end);
     const note = await getOrCreateJalaliNote(settings, period, date);
-    editor.replaceRange(
-      this.app.fileManager.generateMarkdownLink(
-        note,
-        file?.path ?? "",
-        undefined,
-        phrase.label
-      ),
-      start,
-      end
+    const link = this.app.fileManager.generateMarkdownLink(
+      note,
+      file?.path ?? "",
+      undefined,
+      phrase.label
     );
+    // Creating the note is async; if the text changed meanwhile, the saved
+    // positions are stale, so insert at the cursor instead.
+    if (editor.getRange(start, end) === typed) {
+      editor.replaceRange(link, start, end);
+    } else {
+      editor.replaceSelection(link);
+    }
   }
 }

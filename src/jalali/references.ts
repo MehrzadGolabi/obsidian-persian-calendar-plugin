@@ -61,11 +61,14 @@ export function resolveReference(
   };
 }
 
-/** An `@` or `@/` just before the cursor, at the start of a word. */
+/**
+ * An `@` or `@/` just before the cursor, at the start of a word. The query
+ * can't start with a space, so `@ ` and then Enter doesn't pick a note.
+ */
 export function parseReferenceTrigger(
   linePrefix: string
 ): { start: number; plain: boolean; query: string } | null {
-  const match = /(^|\s)@(\/?)([^@\n]{0,20})$/.exec(linePrefix);
+  const match = /(^|\s)@(\/?)((?:[^@\s][^@\n]{0,19})?)$/.exec(linePrefix);
   if (!match) {
     return null;
   }

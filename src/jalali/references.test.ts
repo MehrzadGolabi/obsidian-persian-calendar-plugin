@@ -121,6 +121,19 @@ describe("parseReferenceTrigger", () => {
     expect(parseReferenceTrigger("no at sign")).toBeNull();
   });
 
+  test("@ followed by a space is not a trigger", () => {
+    expect(parseReferenceTrigger("meet @ ")).toBeNull();
+    expect(parseReferenceTrigger("@  ")).toBeNull();
+  });
+
+  test("a bare @ still opens the list", () => {
+    expect(parseReferenceTrigger("meet @")).toEqual({
+      start: 5,
+      plain: false,
+      query: "",
+    });
+  });
+
   test("a long run after @ is not a trigger", () => {
     expect(parseReferenceTrigger("@" + "x".repeat(40))).toBeNull();
   });

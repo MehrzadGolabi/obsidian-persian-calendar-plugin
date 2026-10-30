@@ -19,7 +19,9 @@ export function parseCalendarUri(
   today: Date
 ): { period: JalaliPeriod; date: Date } | { error: string } {
   const type = params.type ?? "daily";
-  const period = TYPES[type];
+  const period = Object.prototype.hasOwnProperty.call(TYPES, type)
+    ? TYPES[type]
+    : undefined;
   if (!period) {
     return {
       error: `Unknown note type '${type}'. Use ${Object.keys(TYPES).join(", ")}.`,

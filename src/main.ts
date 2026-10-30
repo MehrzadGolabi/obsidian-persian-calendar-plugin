@@ -24,6 +24,11 @@ declare global {
   }
 }
 
+function reportNoteError(err: unknown): void {
+  console.error("Failed to open the calendar note", err);
+  new Notice("Could not open or create the calendar note");
+}
+
 export default class CalendarPlugin extends Plugin {
   public options: ISettings;
   private view: CalendarView;
@@ -129,7 +134,7 @@ export default class CalendarPlugin extends Plugin {
         result.period,
         result.date,
         false
-      );
+      ).catch(reportNoteError);
     });
 
     this.addCommand({
@@ -159,7 +164,9 @@ export default class CalendarPlugin extends Plugin {
   }
 
   private openTodaysJalaliNote(period: JalaliPeriod): void {
-    openOrCreateJalaliNote(this.options, period, new Date(), false);
+    openOrCreateJalaliNote(this.options, period, new Date(), false).catch(
+      reportNoteError
+    );
   }
 
   initLeaf(): void {

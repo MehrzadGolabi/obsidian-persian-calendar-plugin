@@ -38,3 +38,10 @@ test("an impossible or malformed date is an error", () => {
   );
   expect(parseCalendarUri({ date: "tomorrow" }, today)).toHaveProperty("error");
 });
+
+test("inherited object keys are not note types", () => {
+  expect(parseCalendarUri({ type: "toString" }, today)).toHaveProperty("error");
+  expect(parseCalendarUri({ type: "constructor" }, today)).toHaveProperty(
+    "error"
+  );
+});
