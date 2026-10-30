@@ -10,6 +10,8 @@ import {
 } from "./settings";
 import CalendarView from "./view";
 import { ConvertDateModal } from "./ui/convertModal";
+import PlaceholderSuggest from "./ui/placeholderSuggest";
+import ReferenceSuggest from "./ui/referenceSuggest";
 
 declare global {
   interface Window {
@@ -89,6 +91,13 @@ export default class CalendarPlugin extends Plugin {
       name: "Reveal active note",
       callback: () => this.view.revealActiveNote(),
     });
+
+    this.registerEditorSuggest(
+      new ReferenceSuggest(this.app, () => this.options)
+    );
+    this.registerEditorSuggest(
+      new PlaceholderSuggest(this.app, () => this.options)
+    );
 
     await this.loadOptions();
 

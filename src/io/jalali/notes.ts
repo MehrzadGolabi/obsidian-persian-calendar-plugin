@@ -125,6 +125,28 @@ export async function createJalaliNote(
   return window.app.vault.create(path, withAlias);
 }
 
+/** Filename (without extension) of the note for `date`, e.g. `1405-08-08`. */
+export function getJalaliNoteName(
+  settings: ISettings,
+  period: JalaliPeriod,
+  date: Date
+): string {
+  const { format } = getJalaliNoteConfig(settings, period);
+  return formatJalali(startOfJalaliPeriod(date, period), format);
+}
+
+/** The note for `date`, created without any confirmation if it's missing. */
+export async function getOrCreateJalaliNote(
+  settings: ISettings,
+  period: JalaliPeriod,
+  date: Date
+): Promise<TFile> {
+  return (
+    getJalaliNote(settings, period, date) ??
+    createJalaliNote(settings, period, date)
+  );
+}
+
 function getTargetLeaf(
   settings: ISettings,
   ctrlPressed: boolean
