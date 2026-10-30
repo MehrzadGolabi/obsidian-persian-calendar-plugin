@@ -3,6 +3,7 @@ import { appHasDailyNotesPluginLoaded } from "obsidian-daily-notes-interface";
 import type { ILocaleOverride, IWeekStartOption } from "obsidian-calendar-ui";
 
 import { DEFAULT_WEEK_FORMAT, DEFAULT_WORDS_PER_DOT } from "src/constants";
+import type { JalaliPeriod } from "src/jalali/dates";
 
 import type CalendarPlugin from "./main";
 
@@ -20,6 +21,62 @@ export interface ISettings {
   weeklyNoteFolder: string;
 
   localeOverride: ILocaleOverride;
+
+  // Jalali calendar
+  calendarMode: CalendarMode;
+  jalaliPersianDigits: boolean;
+  jalaliDailyFormat: string;
+  jalaliDailyFolder: string;
+  jalaliDailyTemplate: string;
+  jalaliWeeklyFormat: string;
+  jalaliWeeklyFolder: string;
+  jalaliWeeklyTemplate: string;
+  jalaliMonthlyFormat: string;
+  jalaliMonthlyFolder: string;
+  jalaliMonthlyTemplate: string;
+  jalaliQuarterlyFormat: string;
+  jalaliQuarterlyFolder: string;
+  jalaliQuarterlyTemplate: string;
+  jalaliYearlyFormat: string;
+  jalaliYearlyFolder: string;
+  jalaliYearlyTemplate: string;
+}
+
+export type CalendarMode = "gregorian" | "jalali";
+
+export const JALALI_PERIODS: {
+  period: JalaliPeriod;
+  label: string;
+  defaultFormat: string;
+}[] = [
+  { period: "day", label: "Daily", defaultFormat: "jYYYY-jMM-jDD" },
+  { period: "week", label: "Weekly", defaultFormat: "jgggg-[W]jww" },
+  { period: "month", label: "Monthly", defaultFormat: "jYYYY-jMM" },
+  { period: "quarter", label: "Quarterly", defaultFormat: "jYYYY-[Q]jQ" },
+  { period: "year", label: "Yearly", defaultFormat: "jYYYY" },
+];
+
+const capitalize = (period: JalaliPeriod) =>
+  ({
+    day: "Daily",
+    week: "Weekly",
+    month: "Monthly",
+    quarter: "Quarterly",
+    year: "Yearly",
+  }[period]);
+
+/** The `jalali<Period>{Format,Folder,Template}` settings for one note type. */
+export function getJalaliNoteConfig(
+  settings: ISettings,
+  period: JalaliPeriod
+): { format: string; folder: string; template: string } {
+  const key = `jalali${capitalize(period)}` as const;
+  const defaults = JALALI_PERIODS.find((p) => p.period === period);
+  return {
+    format: settings[`${key}Format`] || defaults.defaultFormat,
+    folder: settings[`${key}Folder`] || "",
+    template: settings[`${key}Template`] || "",
+  };
 }
 
 const weekdays = [
@@ -48,6 +105,24 @@ export const defaultSettings = Object.freeze({
   localeOverride: "system-default",
 
   showQuarter: false, // Added default value for showQuarter
+
+  calendarMode: "gregorian" as CalendarMode,
+  jalaliPersianDigits: true,
+  jalaliDailyFormat: "jYYYY-jMM-jDD",
+  jalaliDailyFolder: "",
+  jalaliDailyTemplate: "",
+  jalaliWeeklyFormat: "jgggg-[W]jww",
+  jalaliWeeklyFolder: "",
+  jalaliWeeklyTemplate: "",
+  jalaliMonthlyFormat: "jYYYY-jMM",
+  jalaliMonthlyFolder: "",
+  jalaliMonthlyTemplate: "",
+  jalaliQuarterlyFormat: "jYYYY-[Q]jQ",
+  jalaliQuarterlyFolder: "",
+  jalaliQuarterlyTemplate: "",
+  jalaliYearlyFormat: "jYYYY",
+  jalaliYearlyFolder: "",
+  jalaliYearlyTemplate: "",
 });
 
 export function appHasPeriodicNotesPluginLoaded(): boolean {
@@ -107,9 +182,61 @@ export class CalendarSettingsTab extends PluginSettingTab {
     }
 
     this.containerEl.createEl("h3", {
+      text: "Jalali Calendar",
+    });
+    this.containerEl.createEl("p", {
+      cls: "setting-item-description",
+      text: "In Jalali mode, notes are named and looked up by Jalali date using the formats below (tokens: jYYYY jYY jMMMM jMM jM jDD jD jQ jgggg jww jw; wrap literal text in [brackets]).",
+    });
+    this.addPersianDigitsSetting();
+    JALALI_PERIODS.forEach(({ period, label, defaultFormat }) =>
+      this.addJalaliNoteSettings(period, label, defaultFormat)
+    );
+
+    this.containerEl.createEl("h3", {
       text: "Advanced Settings",
     });
     this.addLocaleOverrideSetting();
+  }
+
+  addPersianDigitsSetting(): void {
+    new Setting(this.containerEl)
+      .setName("Persian digits")
+      .setDesc("Show ۰۱۲۳۴۵۶۷۸۹ instead of 0123456789 in the Jalali calendar")
+      .addToggle((toggle) => {
+        toggle.setValue(this.plugin.options.jalaliPersianDigits);
+        toggle.onChange(async (value) => {
+          this.plugin.writeOptions(() => ({ jalaliPersianDigits: value }));
+        });
+      });
+  }
+
+  addJalaliNoteSettings(
+    period: JalaliPeriod,
+    label: string,
+    defaultFormat: string
+  ): void {
+    const key = `jalali${label}` as const;
+    const text = (
+      name: string,
+      desc: string,
+      field: "Format" | "Folder" | "Template",
+      placeholder = ""
+    ) =>
+      new Setting(this.containerEl)
+        .setName(`Jalali ${label.toLowerCase()} note ${name}`)
+        .setDesc(desc)
+        .addText((textfield) => {
+          textfield.setPlaceholder(placeholder);
+          textfield.setValue(this.plugin.options[`${key}${field}`]);
+          textfield.onChange(async (value) => {
+            this.plugin.writeOptions(() => ({ [`${key}${field}`]: value }));
+          });
+        });
+
+    text("format", "Filename format", "Format", defaultFormat);
+    text("folder", "New notes will be placed here", "Folder");
+    text("template", "Template file to copy into new notes", "Template");
   }
 
   addDotThresholdSetting(): void {

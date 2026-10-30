@@ -13,6 +13,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "jalaali-js": "^2.0.1",
     "obsidian": "obsidianmd/obsidian-api#master",
     "obsidian-calendar-ui": "0.3.12",
     "obsidian-daily-notes-interface": "0.9.4",
@@ -25,6 +26,7 @@
     "@rollup/plugin-node-resolve": "11.2.1",
     "@rollup/plugin-typescript": "8.2.1",
     "@tsconfig/svelte": "1.0.10",
+    "@types/jalaali-js": "^1.2.0",
     "@types/jest": "26.0.22",
     "@types/moment": "2.13.0",
     "@typescript-eslint/eslint-plugin": "4.20.0",
@@ -39,6 +41,10 @@
     "svelte-preprocess": "4.7.0",
     "ts-jest": "26.5.4",
     "typescript": "4.2.3"
+  },
+  "resolutions": {
+    "@types/node": "14.14.21",
+    "**/@rollup/pluginutils/picomatch": "2.2.2"
   },
   "jest": {
     "moduleNameMapper": {

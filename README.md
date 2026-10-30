@@ -4,6 +4,7 @@ This plugin is a fork of the abandoned [Calendar](https://github.com/liamcain/ob
 - Added quarters to the calendar leaf
 - The month, year, and quarters can now be clicked to navigate to the corresponding monthly/quarterly/yearly note, fully integrated with the [Periodic Notes](https://github.com/liamcain/obsidian-periodic-notes) plugin
 - New options, such as the ability to change which side the week numbers get displayed, and the ability to hide quarters
+- **Persian (Jalali) calendar**: switch between Gregorian and Jalali with the toggle above the calendar (or the "Toggle Jalali/Gregorian calendar" command). Switching keeps the month you are viewing, and today's date in the other calendar is shown next to the toggle. In Jalali mode, daily, weekly, monthly, quarterly and yearly notes are named and looked up by Jalali date (e.g. `1405-08-08.md`), using the format, folder and template set under *Jalali Calendar* in the plugin settings. Weeks start on Saturday.
 
 <img width="294" height="386" alt="2025-12-31_tIZYFaONKG" src="https://github.com/user-attachments/assets/020ef1ab-a08b-4b9e-9f03-5bfd56885634" />
 

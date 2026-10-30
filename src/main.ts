@@ -9,6 +9,7 @@ import {
   ISettings,
 } from "./settings";
 import CalendarView from "./view";
+import { ConvertDateModal } from "./ui/convertModal";
 
 declare global {
   interface Window {
@@ -37,8 +38,20 @@ export default class CalendarPlugin extends Plugin {
 
     this.registerView(
       VIEW_TYPE_CALENDAR,
-      (leaf: WorkspaceLeaf) => (this.view = new CalendarView(leaf))
+      (leaf: WorkspaceLeaf) =>
+        (this.view = new CalendarView(leaf, (calendarMode) =>
+          this.writeOptions(() => ({ calendarMode }))
+        ))
     );
+
+    this.addCommand({
+      id: "toggle-calendar-mode",
+      name: "Toggle Jalali/Gregorian calendar",
+      callback: () =>
+        this.writeOptions((old) => ({
+          calendarMode: old.calendarMode === "jalali" ? "gregorian" : "jalali",
+        })),
+    });
 
     this.addCommand({
       id: "show-calendar-view",
@@ -51,6 +64,13 @@ export default class CalendarPlugin extends Plugin {
         }
         this.initLeaf();
       },
+    });
+
+    this.addCommand({
+      id: "convert-date",
+      name: "Convert date between Jalali and Gregorian",
+      callback: () =>
+        new ConvertDateModal(this.app, this.options.calendarMode).open(),
     });
 
     this.addCommand({

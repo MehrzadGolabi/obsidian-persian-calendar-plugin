@@ -143,3 +143,9 @@ function createSelectedFileStore() {
 }
 
 export const activeFile = createSelectedFileStore();
+
+/** Bumped whenever notes are created, deleted or renamed, so Jalali views re-check which notes exist. */
+export const jalaliRevision = writable(0);
+
+/** Vault path of the file in the active leaf (the Jalali calendar compares paths, not date UIDs). */
+export const activeFilePath = writable<string | null>(null);

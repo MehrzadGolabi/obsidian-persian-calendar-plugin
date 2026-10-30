@@ -21,12 +21,20 @@ import { tryToCreateWeeklyNote } from "src/io/weeklyNotes";
 import { tryToCreateMonthlyNote } from "src/io/monthlyNotes";
 import { tryToCreateYearlyNote } from "src/io/yearlyNotes";
 import { tryToCreateQuarterlyNote } from "src/io/quarterlyNotes";
-import type { ISettings } from "src/settings";
+import {
+  findJalaliDateForFile,
+  getJalaliNote,
+  openOrCreateJalaliNote,
+} from "src/io/jalali/notes";
+import { formatJalali, JalaliPeriod, startOfJalaliPeriod } from "src/jalali/dates";
+import { getJalaliNoteConfig, CalendarMode, ISettings } from "src/settings";
 
 import Calendar from "./ui/Calendar.svelte";
 import { showFileMenu } from "./ui/fileMenu";
 import {
   activeFile,
+  activeFilePath,
+  jalaliRevision,
   dailyNotes,
   weeklyNotes,
   monthlyNotes,
@@ -45,8 +53,16 @@ export default class CalendarView extends ItemView {
   private calendar: Calendar;
   private settings: ISettings;
 
-  constructor(leaf: WorkspaceLeaf) {
+  constructor(
+    leaf: WorkspaceLeaf,
+    private readonly setCalendarMode: (mode: CalendarMode) => void
+  ) {
     super(leaf);
+
+    this.openOrCreateJalaliNote = this.openOrCreateJalaliNote.bind(this);
+    this.onHoverJalali = this.onHoverJalali.bind(this);
+    this.onContextMenuJalali = this.onContextMenuJalali.bind(this);
+    this.onJalaliNotesChanged = this.onJalaliNotesChanged.bind(this);
 
     this.openOrCreateDailyNote = this.openOrCreateDailyNote.bind(this);
     this.openOrCreateWeeklyNote = this.openOrCreateWeeklyNote.bind(this);
@@ -82,6 +98,9 @@ export default class CalendarView extends ItemView {
     this.registerEvent(this.app.vault.on("create", this.onFileCreated));
     this.registerEvent(this.app.vault.on("delete", this.onFileDeleted));
     this.registerEvent(this.app.vault.on("modify", this.onFileModified));
+    this.registerEvent(this.app.vault.on("create", this.onJalaliNotesChanged));
+    this.registerEvent(this.app.vault.on("delete", this.onJalaliNotesChanged));
+    this.registerEvent(this.app.vault.on("rename", this.onJalaliNotesChanged));
     this.registerEvent(this.app.workspace.on("file-open", this.onFileOpen));
 
     this.settings = null;
@@ -144,9 +163,68 @@ export default class CalendarView extends ItemView {
         onContextMenuMonth: this.onContextMenuMonth,
         onContextMenuYear: this.onContextMenuYear,
         onContextMenuQuarter: this.onContextMenuQuarter,
+        onSetMode: this.setCalendarMode,
+        onClickJalali: this.openOrCreateJalaliNote,
+        onHoverJalali: this.onHoverJalali,
+        onContextMenuJalali: this.onContextMenuJalali,
         sources,
       },
     });
+  }
+
+  openOrCreateJalaliNote(
+    period: JalaliPeriod,
+    date: Date,
+    ctrlPressed: boolean
+  ): Promise<void> {
+    return openOrCreateJalaliNote(
+      this.settings,
+      period,
+      date,
+      ctrlPressed,
+      (file) => activeFilePath.set(file.path)
+    );
+  }
+
+  private onHoverJalali(
+    period: JalaliPeriod,
+    date: Date,
+    targetEl: EventTarget,
+    isMetaPressed: boolean
+  ): void {
+    if (!isMetaPressed) {
+      return;
+    }
+    const { format } = getJalaliNoteConfig(this.settings, period);
+    const note = getJalaliNote(this.settings, period, date);
+    this.app.workspace.trigger(
+      "link-hover",
+      this,
+      targetEl,
+      formatJalali(startOfJalaliPeriod(date, period), format),
+      note?.path
+    );
+  }
+
+  private onContextMenuJalali(
+    period: JalaliPeriod,
+    date: Date,
+    event: MouseEvent
+  ): void {
+    const note = getJalaliNote(this.settings, period, date);
+    if (!note) {
+      return;
+    }
+    showFileMenu(this.app, note, {
+      x: event.pageX,
+      y: event.pageY,
+    });
+  }
+
+  private onJalaliNotesChanged(): void {
+    if (this.settings?.calendarMode === "jalali") {
+      jalaliRevision.update((n) => n + 1);
+    }
   }
 
   onHoverDay(
@@ -384,6 +462,7 @@ export default class CalendarView extends ItemView {
       file = view.file;
     }
     activeFile.setFile(file);
+    activeFilePath.set(file ? file.path : null);
 
     if (this.calendar) {
       this.calendar.tick();
@@ -391,44 +470,54 @@ export default class CalendarView extends ItemView {
   }
 
   public revealActiveNote(): void {
-    const { moment } = window;
     const { activeLeaf } = this.app.workspace;
+    if (!(activeLeaf.view instanceof FileView)) {
+      return;
+    }
+    const file = activeLeaf.view.file;
 
-    if (activeLeaf.view instanceof FileView) {
-      let date = getDateFromFile(activeLeaf.view.file, "day");
-      if (date) {
-        this.calendar.$set({ displayedMonth: date });
-        return;
-      }
+    // Prefer reading the note as the calendar being shown, then the other one.
+    const inJalali = this.settings.calendarMode === "jalali";
+    const date = inJalali
+      ? this.findJalaliDate(file) ?? this.findGregorianDate(file)
+      : this.findGregorianDate(file) ?? this.findJalaliDate(file);
+    if (!date) {
+      return;
+    }
 
-      const { format: weeklyFormat } = getWeeklyNoteSettings();
-      date = moment(activeLeaf.view.file.basename, weeklyFormat, true);
+    if (inJalali) {
+      this.calendar.$set({ jalaliDisplayed: date.toDate() });
+    } else {
+      this.calendar.$set({ displayedMonth: date });
+    }
+  }
+
+  private findJalaliDate(file: TFile): Moment | null {
+    const date = findJalaliDateForFile(this.settings, file);
+    return date ? window.moment(date) : null;
+  }
+
+  private findGregorianDate(file: TFile): Moment | null {
+    const { moment } = window;
+
+    const day = getDateFromFile(file, "day");
+    if (day) {
+      return day;
+    }
+
+    const formats = [
+      getWeeklyNoteSettings().format,
+      getMonthlyNoteSettings().format,
+      getQuarterlyNoteSettings().format,
+      getYearlyNoteSettings().format,
+    ];
+    for (const format of formats) {
+      const date = moment(file.basename, format, true);
       if (date.isValid()) {
-        this.calendar.$set({ displayedMonth: date });
-        return;
-      }
-
-      const { format: monthlyFormat } = getMonthlyNoteSettings();
-      date = moment(activeLeaf.view.file.basename, monthlyFormat, true);
-      if (date.isValid()) {
-        this.calendar.$set({ displayedMonth: date });
-        return;
-      }
-
-      const { format: quarterlyFormat } = getQuarterlyNoteSettings(); // Added block
-      date = moment(activeLeaf.view.file.basename, quarterlyFormat, true);
-      if (date.isValid()) {
-        this.calendar.$set({ displayedMonth: date });
-        return;
-      }
-
-      const { format: yearlyFormat } = getYearlyNoteSettings();
-      date = moment(activeLeaf.view.file.basename, yearlyFormat, true);
-      if (date.isValid()) {
-        this.calendar.$set({ displayedMonth: date });
-        return;
+        return date;
       }
     }
+    return null;
   }
 
   async openOrCreateWeeklyNote(
