@@ -1,7 +1,10 @@
 import type { Moment, WeekSpec } from "moment";
-import { App, Plugin, WorkspaceLeaf } from "obsidian";
+import { App, Notice, Plugin, WorkspaceLeaf } from "obsidian";
 
 import { VIEW_TYPE_CALENDAR } from "./constants";
+import { openOrCreateJalaliNote } from "./io/jalali/notes";
+import { parseCalendarUri } from "./io/jalali/uri";
+import type { JalaliPeriod } from "./jalali/dates";
 import { settings } from "./ui/stores";
 import {
   appHasPeriodicNotesPluginLoaded,
@@ -79,11 +82,54 @@ export default class CalendarPlugin extends Plugin {
       id: "open-weekly-note",
       name: "Open Weekly Note",
       checkCallback: (checking) => {
+        if (this.options.calendarMode === "jalali") {
+          if (!checking) {
+            this.openTodaysJalaliNote("week");
+          }
+          return true;
+        }
         if (checking) {
           return !appHasPeriodicNotesPluginLoaded();
         }
         this.view.openOrCreateWeeklyNote(window.moment(), false);
       },
+    });
+
+    const jalaliCommands: [string, string, JalaliPeriod][] = [
+      ["open-daily-note", "Open Daily Note", "day"],
+      ["open-monthly-note", "Open Monthly Note", "month"],
+      ["open-quarterly-note", "Open Quarterly Note", "quarter"],
+      ["open-yearly-note", "Open Yearly Note", "year"],
+    ];
+    jalaliCommands.forEach(([id, name, period]) =>
+      this.addCommand({
+        id,
+        name,
+        checkCallback: (checking) => {
+          if (this.options.calendarMode !== "jalali") {
+            return false;
+          }
+          if (!checking) {
+            this.openTodaysJalaliNote(period);
+          }
+          return true;
+        },
+      })
+    );
+
+    this.registerObsidianProtocolHandler("persian-calendar", (params) => {
+      const result = parseCalendarUri(params, new Date());
+      if ("error" in result) {
+        new Notice(result.error);
+        return;
+      }
+      // An external caller can't answer the confirm-before-create dialog.
+      openOrCreateJalaliNote(
+        { ...this.options, shouldConfirmBeforeCreate: false },
+        result.period,
+        result.date,
+        false
+      );
     });
 
     this.addCommand({
@@ -110,6 +156,10 @@ export default class CalendarPlugin extends Plugin {
         this.app.workspace.on("layout-ready", this.initLeaf.bind(this))
       );
     }
+  }
+
+  private openTodaysJalaliNote(period: JalaliPeriod): void {
+    openOrCreateJalaliNote(this.options, period, new Date(), false);
   }
 
   initLeaf(): void {
