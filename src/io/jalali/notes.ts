@@ -110,6 +110,8 @@ export async function createJalaliNote(
     format,
     filename,
     time: window.moment().format("HH:mm"),
+    period,
+    today: new Date(),
   });
 
   await ensureFolderExists(path);

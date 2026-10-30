@@ -41,3 +41,20 @@ test("tomorrow rolls over the Jalali month end", () => {
 test("unknown placeholders are left alone", () => {
   expect(apply("{{foo}}")).toBe("{{foo}}");
 });
+
+test("Persian placeholders are replaced when the note type is given", () => {
+  expect(
+    applyJalaliTemplate("{{سال یادداشت}} {{title}}", {
+      date,
+      format: FORMAT,
+      filename: "x",
+      time: "",
+      period: "day",
+      today: date,
+    })
+  ).toBe("1405 x");
+});
+
+test("Persian placeholders are left alone without a note type", () => {
+  expect(apply("{{سال یادداشت}}")).toBe("{{سال یادداشت}}");
+});

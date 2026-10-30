@@ -1,4 +1,5 @@
-import { formatJalali } from "src/jalali/dates";
+import { formatJalali, JalaliPeriod } from "src/jalali/dates";
+import { applyPersianPlaceholders } from "src/jalali/placeholders";
 
 interface ITemplateContext {
   date: Date;
@@ -6,6 +7,10 @@ interface ITemplateContext {
   format: string;
   filename: string;
   time: string;
+  /** The note type; Persian placeholders are only replaced when it is set. */
+  period?: JalaliPeriod;
+  /** Defaults to now. */
+  today?: Date;
 }
 
 function addDays(date: Date, days: number): Date {
@@ -20,13 +25,14 @@ function addDays(date: Date, days: number): Date {
 /**
  * Template variables supported in Jalali notes: `{{date}}`, `{{title}}`,
  * `{{time}}`, `{{date:jFORMAT}}`, `{{yesterday}}` and `{{tomorrow}}`.
- * Offsets like `{{date+1d}}` are not supported.
+ * Offsets like `{{date+1d}}` are not supported. With a `period`, the Persian
+ * placeholders (see `src/jalali/placeholders.ts`) are replaced too.
  */
 export function applyJalaliTemplate(
   contents: string,
-  { date, format, filename, time }: ITemplateContext
+  { date, format, filename, time, period, today }: ITemplateContext
 ): string {
-  return contents
+  const replaced = contents
     .replace(/{{\s*date\s*:(.+?)}}/gi, (_, fmt: string) =>
       formatJalali(date, fmt.trim())
     )
@@ -34,4 +40,12 @@ export function applyJalaliTemplate(
     .replace(/{{\s*time\s*}}/gi, time)
     .replace(/{{\s*yesterday\s*}}/gi, formatJalali(addDays(date, -1), format))
     .replace(/{{\s*tomorrow\s*}}/gi, formatJalali(addDays(date, 1), format));
+
+  return period
+    ? applyPersianPlaceholders(replaced, {
+        period,
+        date,
+        today: today ?? new Date(),
+      })
+    : replaced;
 }
