@@ -10,6 +10,7 @@ import { parseJalaliFormat } from "src/jalali/parse";
 import { getJalaliNoteConfig, ISettings, JALALI_PERIODS } from "src/settings";
 import { createConfirmationDialog } from "src/ui/modal";
 
+import { addAlias } from "./frontmatter";
 import { applyJalaliTemplate } from "./template";
 
 const PERIOD_TITLES: Record<JalaliPeriod, string> = {
@@ -114,8 +115,14 @@ export async function createJalaliNote(
     today: new Date(),
   });
 
+  // Lets Gregorian links, Tasks and Dataview find the Jalali daily note.
+  const withAlias =
+    period === "day"
+      ? addAlias(contents, window.moment(start).format("YYYY-MM-DD"))
+      : contents;
+
   await ensureFolderExists(path);
-  return window.app.vault.create(path, contents);
+  return window.app.vault.create(path, withAlias);
 }
 
 function getTargetLeaf(
